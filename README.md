@@ -112,5 +112,4 @@ npm start
 
 - Never commit .env files to version control
 - Regularly update dependencies for security patches
-- Use strong JWT secrets in production
 - Enable proper CORS settings for production
