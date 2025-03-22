@@ -1,4 +1,3 @@
-// app/option-chain/page.js
 "use client";
 import useOptionChain from "../../hooks/useOptionChain";
 import AppLayout from "../../components/layout/AppLayout";

@@ -1,4 +1,3 @@
-// frontend/components/layout/AppLayout.js
 import Header from "./Header";
 import Footer from "./Footer";
 

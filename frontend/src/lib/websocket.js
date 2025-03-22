@@ -1,8 +1,3 @@
-/**
- * WebSocket utilities for the Option Chain application
- */
-
-// WebSocket URL
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:5001/ws";
 
 // WebSocket states
@@ -50,7 +45,6 @@ class WebSocketService {
       return;
     }
 
-    // Clear any existing socket
     if (this.socket) {
       this.socket.onopen = null;
       this.socket.onclose = null;
@@ -70,7 +64,6 @@ class WebSocketService {
         this.startPingInterval();
         this._triggerHandlers("open", event);
 
-        // Process any pending subscriptions
         if (this.pendingSubscriptions.size > 0) {
           const tokens = Array.from(this.pendingSubscriptions);
 
@@ -106,19 +99,19 @@ class WebSocketService {
    */
   disconnect() {
     if (!this.socket) return;
-
+  
     this.stopPingInterval();
     clearTimeout(this.reconnectTimeout);
-
-    if (
-      this.socket.readyState === WS_STATES.OPEN ||
-      this.socket.readyState === WS_STATES.CONNECTING
-    ) {
+    
+    // Close the socket if it's in an OPEN or CONNECTING state
+    if (this.socket.readyState === WS_STATES.OPEN || 
+        this.socket.readyState === WS_STATES.CONNECTING) {
       this.socket.close();
     }
-
+  
     this.socket = null;
     this.pendingSubscriptions.clear();
+    this.reconnectAttempts = 0; // Reset reconnect attempts
   }
 
   /**
@@ -148,14 +141,13 @@ class WebSocketService {
 
   /**
    * Unsubscribe from option tokens
-   * @param {Array<string>} tokens - Array of token IDs to unsubscribe from
+   * @param {Array<string>} tokens 
    */
   unsubscribe(tokens) {
     if (!tokens) return;
 
     const tokenArray = Array.isArray(tokens) ? tokens : [tokens];
 
-    // Remove from pending subscriptions if not connected
     tokenArray.forEach((token) => this.pendingSubscriptions.delete(token));
 
     if (!this.isConnected()) {
@@ -213,7 +205,7 @@ class WebSocketService {
       if (this.isConnected()) {
         this.send({ type: MESSAGE_TYPES.PING, timestamp: Date.now() });
       } else {
-        // If we're trying to ping but not connected, clear the interval
+       
         this.stopPingInterval();
       }
     }, 30000); // Send ping every 30 seconds

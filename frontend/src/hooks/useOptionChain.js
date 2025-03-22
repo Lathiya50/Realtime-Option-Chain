@@ -9,10 +9,8 @@ import { OPTION_TYPES, DEFAULT_CONFIG } from "../lib/constants";
  * @returns {Object} Option chain data and functions
  */
 export default function useOptionChain(config = {}) {
-  // Merge default config with provided config
   const options = { ...DEFAULT_CONFIG, ...config };
 
-  // State for option chain data
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [optionChain, setOptionChain] = useState(null);
@@ -21,7 +19,6 @@ export default function useOptionChain(config = {}) {
   const [visibleStrikes, setVisibleStrikes] = useState([]);
   const [atmStrike, setAtmStrike] = useState(null);
 
-  // Get WebSocket functionality
   const { isConnected, connect, subscribe, marketData } = useWebSocket();
 
   // Find the At The Money strike (closest to underlying price)
@@ -66,18 +63,14 @@ export default function useOptionChain(config = {}) {
 
       const data = await fetchOptionChain();
 
-      // Set underlying data
       setUnderlying(data.underlying);
 
-      // Process options data
       const processedOptions = {};
       const allStrikes = new Set();
 
       data.options.forEach((option) => {
-        // Add strike to set
         allStrikes.add(option.strike);
 
-        // Group options by strike and type
         if (!processedOptions[option.strike]) {
           processedOptions[option.strike] = {};
         }
@@ -85,15 +78,12 @@ export default function useOptionChain(config = {}) {
         processedOptions[option.strike][option.optionType] = option;
       });
 
-      // Sort strikes
       const sortedStrikes = Array.from(allStrikes).sort((a, b) => a - b);
       setStrikes(sortedStrikes);
 
-      // Find ATM strike (closest to underlying price)
       const atm = findAtmStrike(sortedStrikes, data.underlying.currentPrice);
       setAtmStrike(atm);
 
-      // Set visible strikes (centered around ATM strike)
       const visibleStrikes = getVisibleStrikes(
         sortedStrikes,
         atm,
@@ -101,16 +91,13 @@ export default function useOptionChain(config = {}) {
       );
       setVisibleStrikes(visibleStrikes);
 
-      // Set option chain data
       setOptionChain(processedOptions);
       setIsLoading(false);
 
-      // Connect to WebSocket if not already connected
       if (!isConnected) {
         connect();
       }
 
-      // Subscribe to underlying and all options
       const tokens = [data.underlying.token];
       data.options.forEach((option) => tokens.push(option.token));
       subscribe(tokens);
@@ -127,7 +114,6 @@ export default function useOptionChain(config = {}) {
     getVisibleStrikes,
   ]);
 
-  // Update option chain with WebSocket data
   useEffect(() => {
     if (!optionChain || !Object.keys(marketData).length) return;
 
@@ -135,15 +121,12 @@ export default function useOptionChain(config = {}) {
     let updatedOptionChain = { ...optionChain };
     let needsUpdate = false;
 
-    // Process each market data update
     Object.entries(marketData).forEach(([token, data]) => {
-      // Update underlying
       if (underlying && token === underlying.token) {
         updatedUnderlying = { ...underlying, ...data };
         needsUpdate = true;
       }
 
-      // Update options
       for (const strike in optionChain) {
         for (const type in optionChain[strike]) {
           const option = optionChain[strike][type];
@@ -159,21 +142,16 @@ export default function useOptionChain(config = {}) {
       }
     });
 
-    // Update state if needed
     if (needsUpdate) {
-      // First update the option chain
       setOptionChain(updatedOptionChain);
 
-      // Then handle underlying price changes separately
       if (updatedUnderlying !== underlying) {
         setUnderlying(updatedUnderlying);
 
-        // Recalculate ATM strike if underlying price changed
         const newAtm = findAtmStrike(strikes, updatedUnderlying.currentPrice);
         if (newAtm !== atmStrike) {
           setAtmStrike(newAtm);
 
-          // Update visible strikes
           const newVisibleStrikes = getVisibleStrikes(
             strikes,
             newAtm,
@@ -194,12 +172,10 @@ export default function useOptionChain(config = {}) {
     options.displayStrikes,
   ]);
 
-  // Load initial data
   useEffect(() => {
     loadOptionChain();
   }, [loadOptionChain]);
 
-  // Format data for display
   const formattedData = useMemo(() => {
     if (!optionChain || !visibleStrikes.length) return [];
 

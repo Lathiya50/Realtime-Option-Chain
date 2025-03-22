@@ -49,16 +49,15 @@ const SubscriptionManager = ({
     const newTokens = [...tokens, inputToken];
     setTokens(newTokens);
     setInputToken("");
-
     // Subscribe to new token if connected
     if (isConnected) {
       subscribe(inputToken);
     }
   };
-
+    
   // Remove token
   const removeToken = (token) => {
-    const newTokens = tokens.filter((t) => t.token !== token);
+    const newTokens = tokens.filter((t) => t!== token);
     setTokens(newTokens);
 
     // Unsubscribe from token if connected
@@ -91,21 +90,39 @@ const SubscriptionManager = ({
         <div className="text-red-500 mb-4">{error}</div>
       ) : (
         <form onSubmit={handleSubmit} className="mb-4 flex gap-2">
-          <select
-            value={inputToken}
-            onChange={handleInputChange}
-            className="border rounded px-2 py-1 flex-1 bg-black"
-          >
-            <option value="">Select token...</option>
-            {availableTokens.map((item) => (
-              <option key={item.token} value={item.token}>
-                {item.label}
+          <div className="relative flex-1">
+            <select
+              value={inputToken}
+              onChange={handleInputChange}
+              className="appearance-none w-full bg-gray-900 border border-gray-700 text-gray-200 py-2 px-3 pr-8 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!isConnected}
+            >
+              <option value="" className="text-gray-400">
+                Select a token...
               </option>
-            ))}
-          </select>
+              {availableTokens.map((item) => (
+                <option
+                  key={item.token}
+                  value={item.token}
+                  className="bg-gray-900 text-gray-200 hover:bg-gray-800"
+                >
+                  {item.label}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+              <svg
+                className="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+              </svg>
+            </div>
+          </div>
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             disabled={!inputToken || !isConnected}
           >
             <PlusCircle className="w-5 h-5" />

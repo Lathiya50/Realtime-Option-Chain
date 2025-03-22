@@ -1,4 +1,3 @@
-// components/options/OptionChainTable.js
 "use client";
 
 import { OPTION_TYPES, MONEYNESS_COLORS } from "../../lib/constants";

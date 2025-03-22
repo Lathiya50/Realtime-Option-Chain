@@ -7,7 +7,6 @@ const DataInspector = ({ marketData, error }) => {
   const [sortBy, setSortBy] = useState("token");
   const [sortDirection, setSortDirection] = useState("asc");
 
-  // Format market data for display
   useEffect(() => {
     if (!marketData) return;
 
@@ -26,7 +25,6 @@ const DataInspector = ({ marketData, error }) => {
       };
     });
 
-    // Sort data
     const sortedData = dataArray.sort((a, b) => {
       let comparison = 0;
       if (sortBy === "token") {
@@ -45,12 +43,10 @@ const DataInspector = ({ marketData, error }) => {
     setFormattedData(sortedData);
   }, [marketData, sortBy, sortDirection]);
 
-  // Filter data based on search term
   const filteredData = formattedData.filter((item) =>
     item.token.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Handle sort click
   const handleSort = (column) => {
     if (sortBy === column) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -60,7 +56,6 @@ const DataInspector = ({ marketData, error }) => {
     }
   };
 
-  // Render sort indicator
   const renderSortIndicator = (column) => {
     if (sortBy !== column) return null;
 
@@ -71,7 +66,6 @@ const DataInspector = ({ marketData, error }) => {
     }
   };
 
-  // Get style class based on percent change
   const getChangeClass = (change) => {
     if (change === "N/A") return "text-gray-500";
     const numChange = parseFloat(change);

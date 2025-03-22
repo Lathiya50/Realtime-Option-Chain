@@ -1,4 +1,3 @@
-// frontend/components/layout/Footer.js
 export default function Footer() {
   return (
     <footer className="bg-white dark:bg-gray-800 shadow-inner mt-auto">

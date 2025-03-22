@@ -1,4 +1,4 @@
-// frontend/store/websocketMiddleware.js
+
 import websocketService, { MESSAGE_TYPES, WS_STATES } from "../lib/websocket";
 import {
   setConnectionState,
@@ -13,27 +13,27 @@ const websocketMiddleware = (store) => {
   return (next) => (action) => {
     const { dispatch } = store;
 
-    // Initialize WebSocket connection and handlers
+
     if (!isInitialized) {
       isInitialized = true;
 
-      // Connection opened handler
+      
       websocketService.on("open", () => {
         dispatch(setConnectionState(WS_STATES.OPEN));
 
-        // Resubscribe to tokens if any
+      
         const { subscriptions } = store.getState().optionChain;
         if (subscriptions.length > 0) {
           websocketService.subscribe(subscriptions);
         }
       });
 
-      // Connection closed handler
+      
       websocketService.on("close", () => {
         dispatch(setConnectionState(WS_STATES.CLOSED));
       });
 
-      // Message received handler
+      
       websocketService.on("message", (message) => {
         switch (message.type) {
           case MESSAGE_TYPES.MARKET_DATA:
@@ -47,13 +47,11 @@ const websocketMiddleware = (store) => {
         }
       });
 
-      // Error handler
       websocketService.on("error", (error) => {
         dispatch(setError(error.message || "WebSocket error"));
       });
     }
 
-    // Process WebSocket-related actions
     if (action.type === "optionChain/connectWebSocket") {
       websocketService.connect();
     } else if (action.type === "optionChain/disconnectWebSocket") {

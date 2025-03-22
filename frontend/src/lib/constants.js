@@ -1,6 +1,3 @@
-/**
- * Constants for the Option Chain application
- */
 
 // Option types
 export const OPTION_TYPES = {

@@ -1,6 +1,3 @@
-/**
- * API utilities for the Option Chain application
- */
 
 // Base API URL
 const API_BASE_URL =

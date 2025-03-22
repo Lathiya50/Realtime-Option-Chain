@@ -301,6 +301,9 @@ class WebSocketManager {
 
     logger.info(`Client ${clientId} unsubscribed from ${tokens.length} tokens`);
 
+     // Send current state for subscribed tokens
+     this.sendFullMarketState(clientId);
+     
     // Confirm unsubscribe
     this.sendMessage(clientData.client, {
       type: MESSAGE_TYPES.CONNECTION_STATUS,

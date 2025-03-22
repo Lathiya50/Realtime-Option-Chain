@@ -1,4 +1,3 @@
-// frontend/app/page.js
 "use client";
 
 import { useRouter } from "next/navigation";

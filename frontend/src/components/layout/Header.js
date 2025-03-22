@@ -1,4 +1,3 @@
-// frontend/components/layout/Header.js
 "use client";
 
 import { useState } from "react";

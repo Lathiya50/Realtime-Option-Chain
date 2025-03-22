@@ -24,6 +24,11 @@ export default function useWebSocket() {
   // Disconnect from WebSocket
   const disconnect = useCallback(() => {
     websocketService.disconnect();
+    setIsConnecting(false);
+    setConnectionState(WS_STATES.CLOSED);
+    setSubscriptions(new Set());
+    setMarketData({});
+
   }, []);
 
   // Subscribe to tokens
@@ -34,18 +39,15 @@ export default function useWebSocket() {
 
     const tokenArray = Array.isArray(tokens) ? tokens : [tokens];
 
-    // Only proceed if we have a valid connection
-    if (websocketService.isConnected()) {
+        if (websocketService.isConnected()) {
       websocketService.subscribe(tokenArray);
 
-      // Update local subscriptions state
       setSubscriptions((prev) => {
         const newSet = new Set(prev);
         tokenArray.forEach((token) => newSet.add(token));
         return newSet;
       });
     } else {
-      // Store subscriptions to use when connection is established
       setSubscriptions((prev) => {
         const newSet = new Set(prev);
         tokenArray.forEach((token) => newSet.add(token));
@@ -57,14 +59,12 @@ export default function useWebSocket() {
   // Unsubscribe from tokens
   const unsubscribe = useCallback((tokens) => {
     if (!tokens) return;
-
     const tokenArray = Array.isArray(tokens) ? tokens : [tokens];
 
     if (websocketService.isConnected()) {
       websocketService.unsubscribe(tokenArray);
     }
 
-    // Update local subscriptions state regardless of connection status
     setSubscriptions((prev) => {
       const newSet = new Set(prev);
       tokenArray.forEach((token) => newSet.delete(token));
@@ -89,7 +89,6 @@ export default function useWebSocket() {
     const updates = data.data;
     const isFullState = data.isFullState || false;
 
-    // Update market data
     setMarketData((prevData) => {
       const newData = isFullState ? {} : { ...prevData };
 

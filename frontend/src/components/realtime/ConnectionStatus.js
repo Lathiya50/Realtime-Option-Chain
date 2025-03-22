@@ -9,7 +9,6 @@ const ConnectionStatus = ({
   WS_STATES,
   reconnectAttempt,
 }) => {
-  // Get status color based on connection state
   const getStateColor = () => {
     switch (connectionState) {
       case WS_STATES.OPEN:
@@ -25,7 +24,6 @@ const ConnectionStatus = ({
     }
   };
 
-  // Get state name from state code
   const getStateName = () => {
     switch (connectionState) {
       case WS_STATES.OPEN:

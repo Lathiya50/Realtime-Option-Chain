@@ -1,4 +1,3 @@
-// components/options/StrikeFilter.js
 "use client";
 
 import { useState } from "react";
